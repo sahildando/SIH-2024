@@ -28,8 +28,28 @@ const CarbonFootprintCalculator = () => {
   const toast = useToast();
 
   const [familyMembers, setFamilyMembers] = useState(1);
+  const [formData, setFormData] = useState({
+    family: 0,
+    electricity: 0,
+    water: 0,
+    gas: 0,
+    petrol: 0,
+    telecommunication: 0,
+    dairy: 0,
+    meat: 0,
+    tobacco: 0,
+    restaurant: 0,
+    medicine: 0,
+    education: 0,
+    cosmetic: 0,
+    rail: 0,
+    flight: 0,
+    insurance: 0,
+    clothing: 0,
+  });
 
   const handleSliderChange = (value) => {
+    setFormData({ ...formData, ["family"]: parseInt(value) });
     setFamilyMembers(value);
   };
 
@@ -38,7 +58,7 @@ const CarbonFootprintCalculator = () => {
       label: "Step 1: Monthly Bills",
       fields: [
         "family",
-        "elctricity",
+        "electricity",
         "water",
         "gas",
         "petrol",
@@ -80,24 +100,148 @@ const CarbonFootprintCalculator = () => {
     }
   };
 
-  const calculateScore = () => {
-    //all calcs
-    setCurrentStep(currentStep + 1);
+  const calculateScore = async () => {
+    let score = 0;
+    const electricity_rate = 0.15; //0.15 for 1 kwh electricity
+    const electricity_emission_factor = 0.857;
+    const water_rate = 0.667; //1.5 dollar for 1000 gallons
+    const water_emission_factor = 0.0816;
+    const gas_rate = 1.11;
+    const gas_emission_factor = 2.3;
+    const petrol_rate = 1.01;
+    const dairy_emission_factor = 1.2;
+    const meat_emission_factor = 36;
+    const tobacco_price_per_pac = 6.11;
+    const tobacco_emission_factor = 0.28;
+    const restaurant_ef = 2.594;
+
+    // Iterate through the formData object and perform calculations based on field names
+    for (const fieldName in formData) {
+      if (formData.hasOwnProperty(fieldName)) {
+        const value = parseFloat(formData[fieldName]); // Convert the field value to a number
+
+        // Check the field name and perform specific calculations
+        switch (fieldName) {
+          case "electricity":
+            if (value != 0) {
+              score += (value / electricity_rate) * electricity_emission_factor;
+            }
+            break;
+          case "water":
+            if (value != 0) {
+              score += (value / water_rate) * water_emission_factor;
+            }
+            break;
+          case "gas":
+            if (value != 0) {
+              score += (value / gas_rate) * gas_emission_factor;
+            }
+            break;
+          case "petrol":
+            if (value != 0) {
+              score += (value / petrol_rate) * gas_emission_factor;
+            }
+            break;
+          case "dairy":
+            if (value != 0) {
+              score += value * dairy_emission_factor;
+            }
+            break;
+          case "meat":
+            if (value != 0) {
+              score += value * meat_emission_factor;
+            }
+            break;
+          case "tobacco":
+            if (value != 0) {
+              score +=
+                (value / tobacco_price_per_pac) * tobacco_emission_factor;
+            }
+            break;
+          case "restaurant":
+            if (value != 0) {
+              score += parseFloat(formData.family) * restaurant_ef;
+            }
+            break;
+          case "medicine":
+            if (value != 0) {
+              const response = await axios.post(
+                "https://beta4.api.climatiq.io/estimate",
+                {
+                  emission_factor: {
+                    activity_id:
+                      "health_care-type_basic_pharmaceutical_products_and_pharmaceutical_preparations",
+                    data_version: "^2",
+                  },
+                  parameters: {
+                    money: value,
+                    money_unit: "usd",
+                  },
+                },
+                {
+                  headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "RYA7D8W2N1MPX5JMXEFYB807VX7Z",
+                  },
+                }
+              );
+              console.log(response.co2e);
+            }
+
+            break;
+          case "education":
+            if (value != 0) {
+              const response = await axios.post(
+                "https://beta4.api.climatiq.io/estimate",
+                {
+                  emission_factor: {
+                    activity_id: "education-type_education_services",
+                    data_version: "^2",
+                  },
+                  parameters: {
+                    money: value,
+                    money_unit: "usd",
+                  },
+                },
+                {
+                  headers: {
+                    "Content-Type": "application/json",
+                    Authorization: "RYA7D8W2N1MPX5JMXEFYB807VX7Z",
+                  },
+                }
+              );
+              console.log(response.co2e);
+            }
+
+            break;
+          default:
+            // For fields not explicitly handled, you can define custom calculations
+            // Example: Multiply the score for other fields by 1.5
+            score += value * 1.5;
+            break;
+        }
+      }
+    }
+
+    return score;
   };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     console.log("object", name, " ", value);
     // Fetch the selected option's string value
+    setFormData({ ...formData, [name]: value });
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+    console.log(formData);
     try {
+      calculateScore();
     } catch (error) {
       console.error("Error:", error);
     } finally {
+      setCurrentStep(currentStep + 1);
     }
   };
 
@@ -252,7 +396,7 @@ const CarbonFootprintCalculator = () => {
                   <InputGroup>
                     <Input
                       type="number"
-                      name="elctricity"
+                      name="electricity"
                       // value={formData.age}
                       onChange={handleChange}
                       placeholder="Monthly Electric bill in USD..."
@@ -596,7 +740,7 @@ const CarbonFootprintCalculator = () => {
                     <InputGroup>
                       <Input
                         type="number"
-                        name="rail"
+                        name="flight"
                         onChange={handleChange}
                         focusBorderColor="green.500"
                         focusShadow="0 0 0 2px green.300"
@@ -624,7 +768,7 @@ const CarbonFootprintCalculator = () => {
                   <InputGroup>
                     <Input
                       type="number"
-                      name="rail"
+                      name="insurance"
                       //  value={formData.age}
                       onChange={handleChange}
                       placeholder="Average Monthly Insurance Bill"
@@ -646,7 +790,7 @@ const CarbonFootprintCalculator = () => {
                   <InputGroup>
                     <Input
                       type="number"
-                      name="rail"
+                      name="clothing"
                       //  value={formData.age}
                       onChange={handleChange}
                       placeholder="Average Monthly Cost on Clothing and Accessories"
@@ -692,9 +836,9 @@ const CarbonFootprintCalculator = () => {
             {isSecondLastStep && (
               <Flex gap="20px">
                 <Button
-                  type="button"
+                  type="submit"
                   colorScheme="pink"
-                  onClick={calculateScore}
+                  // onClick={calculateScore}
                   width="150%"
                 >
                   Get Your Ecosavvy Score
@@ -703,13 +847,19 @@ const CarbonFootprintCalculator = () => {
             )}
             {isLastStep && (
               <div>
-                <Flex alignItems="center" justifyContent="space-around" ml="20px">
-                    <ThugLifeCard isHappy={false} />
-                    <AverageCalculator percent={5} isPositive={false}/>
+                <Flex
+                  alignItems="center"
+                  justifyContent="space-around"
+                  ml="20px"
+                >
+                  <ThugLifeCard isHappy={false} />
+                  <AverageCalculator percent={5} isPositive={false} />
                 </Flex>
-                <br/>
-                <Text fontSize="large">Get Your Carbon Emission Stats Below:</Text>
-                <br/>
+                <br />
+                <Text fontSize="large">
+                  Get Your Carbon Emission Stats Below:
+                </Text>
+                <br />
                 <BarGraph data={userData} />
               </div>
             )}
