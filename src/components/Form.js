@@ -167,6 +167,12 @@ const CarbonFootprintCalculator = () => {
           case "petrol":
             if (value != 0) {
               score += (value / petrol_rate) * gas_emission_factor;
+              setBills(bills + value);
+            }
+            break;
+          case "telecommunication":
+            if (value != 0) {
+              setBills(bills + value);
             }
             break;
           case "dairy":
@@ -214,7 +220,7 @@ const CarbonFootprintCalculator = () => {
                     {
                       headers: {
                         "Content-Type": "application/json",
-                        Authorization: "Bearer RYA7D8W2N1MPX5JMXEFYB807VX7Z",
+                        Authorization: `Bearer ${process.env.REACT_APP_CLIMATIQ_API}`,
                       },
                     }
                   )
@@ -248,7 +254,7 @@ const CarbonFootprintCalculator = () => {
                     {
                       headers: {
                         "Content-Type": "application/json",
-                        Authorization: "Bearer RYA7D8W2N1MPX5JMXEFYB807VX7Z",
+                        Authorization: `Bearer ${process.env.REACT_APP_CLIMATIQ_API}`,
                       },
                     }
                   )
@@ -262,6 +268,12 @@ const CarbonFootprintCalculator = () => {
               );
             }
 
+            break;
+
+          case "cosmetic":
+            if (value != 0) {
+              setHealth(health + value);
+            }
             break;
 
           case "rail":
@@ -285,7 +297,7 @@ const CarbonFootprintCalculator = () => {
                     {
                       headers: {
                         "Content-Type": "application/json",
-                        Authorization: "Bearer RYA7D8W2N1MPX5JMXEFYB807VX7Z",
+                        Authorization: `Bearer ${process.env.REACT_APP_CLIMATIQ_API}`,
                       },
                     }
                   )
@@ -321,7 +333,7 @@ const CarbonFootprintCalculator = () => {
                     {
                       headers: {
                         "Content-Type": "application/json",
-                        Authorization: "Bearer RYA7D8W2N1MPX5JMXEFYB807VX7Z",
+                        Authorization: `Bearer ${process.env.REACT_APP_CLIMATIQ_API}`,
                       },
                     }
                   )
