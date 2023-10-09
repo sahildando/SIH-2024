@@ -40,6 +40,12 @@ const Navbar = () => {
             <NavItem to="/form" hoverColor={hoverColor} underlineColor={underlineColor}>
               Carbon Calculator
             </NavItem>
+            <NavItem to="/stats" hoverColor={hoverColor} underlineColor={underlineColor}>
+              Statistics
+            </NavItem>
+            <NavItem to="/effects" hoverColor={hoverColor} underlineColor={underlineColor}>
+              Effects
+            </NavItem>
             <NavItem to="/recommendations" hoverColor={hoverColor} underlineColor={underlineColor}>
               Recommendations
             </NavItem>
