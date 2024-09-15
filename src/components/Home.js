@@ -19,7 +19,7 @@ const HomePage = () => {
         <Heading as="h1" mb={2}>
           Welcome to Ecosavvy
         </Heading>
-        <Text fontSize="lg">Your Guide to Sustainable Living</Text>
+        <Text fontSize="lg">Your Guide to Deepak and deepesh  Living</Text>
       </Box>
 
       {/* Landscape Image */}
