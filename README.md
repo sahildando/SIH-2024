@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # EcoSavvy-Score
 Carbon Emission Calculator made with Climatiq. 
 
@@ -18,3 +19,6 @@ npm start
 ```
 
 Check the hosted Ecosavvy at: https://eco-savvy-score.vercel.app/
+=======
+# SIH-2024
+>>>>>>> d5de225a703ea51cd62840b2671b08cf88c84589
